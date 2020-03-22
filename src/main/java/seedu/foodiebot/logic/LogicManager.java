@@ -183,4 +183,9 @@ public class LogicManager implements Logic {
     public ObservableList<Food> getFilteredFavoriteFoodList(boolean isInitialised) {
         return model.getFilteredFavoriteFoodList();
     }
+
+    @Override
+    public ObservableList<Stall> getFilteredRandomizeList(boolean isInitialised) {
+        return model.getFilteredRandomizeList(isInitialised);
+    }
 }

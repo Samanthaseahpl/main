@@ -22,6 +22,7 @@ import seedu.foodiebot.model.budget.Budget;
 import seedu.foodiebot.model.canteen.Canteen;
 import seedu.foodiebot.model.canteen.Stall;
 import seedu.foodiebot.model.food.Food;
+import seedu.foodiebot.model.randomize.Randomize;
 import seedu.foodiebot.storage.FoodieBotStorage;
 import seedu.foodiebot.storage.JsonFoodieBotStorage;
 import seedu.foodiebot.storage.Storage;
@@ -41,6 +42,7 @@ public class ModelManager implements Model {
 
     private final Budget budget;
     private final FilteredList<Food> filteredFavoriteFoodList;
+    private final FilteredList<Stall> randomize;
 
     /**
      * Initializes a ModelManager with the given addressBook and userPrefs.
@@ -58,6 +60,8 @@ public class ModelManager implements Model {
         filteredFoods = new FilteredList<>(this.foodieBot.getFoodList());
         filteredFavoriteFoodList = new FilteredList<>(this.foodieBot.getFavoriteFoodList());
         budget = this.foodieBot.getBudget();
+        randomize = new FilteredList<>(this.foodieBot.getRandomizeList());
+
     }
 
     public ModelManager() {
@@ -268,6 +272,20 @@ public class ModelManager implements Model {
         }
         return filteredFoods;
     }
+
+    @Override
+    public ObservableList<Stall> getFilteredRandomizeList(boolean isInitialised) {
+        if (!isInitialised) {
+            updateModelManagerStalls();
+        }
+        return randomize;
+    }
+
+    @Override
+    public ObservableList<Stall> getFilteredRandomizeList() {
+        return randomize;
+    }
+
 
     /**
      * Updates the filter of the filtered food list to filter by the given {@code predicate}.

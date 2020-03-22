@@ -21,6 +21,7 @@ import seedu.foodiebot.logic.commands.EnterCanteenCommand;
 import seedu.foodiebot.logic.commands.ExitCommand;
 import seedu.foodiebot.logic.commands.FavoritesCommand;
 import seedu.foodiebot.logic.commands.ListCommand;
+import seedu.foodiebot.logic.commands.RandomizeCommand;
 import seedu.foodiebot.logic.commands.exceptions.CommandException;
 import seedu.foodiebot.logic.parser.ParserContext;
 import seedu.foodiebot.logic.parser.exceptions.ParseException;
@@ -217,6 +218,13 @@ public class MainWindow extends UiPart<Stage> {
                 .getRoot());
     }
 
+    @FXML
+    public void handleListRandomize() {
+        listPanelPlaceholder.getChildren().clear();
+        listPanelPlaceholder.getChildren().add(new RandomizeListPanel(logic.getFilteredRandomizeList(isStallInitialised))
+                .getRoot());
+        isStallInitialised = true;
+    }
 
 
     void show() {
@@ -289,6 +297,9 @@ public class MainWindow extends UiPart<Stage> {
                     handleListFood();
                 }
                 break;
+                case RandomizeCommand.COMMAND_WORD:
+                    handleListRandomize();
+                    break;
             default:
                 break;
             }

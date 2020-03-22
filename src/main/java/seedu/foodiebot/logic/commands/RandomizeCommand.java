@@ -4,9 +4,12 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 import seedu.foodiebot.logic.commands.exceptions.CommandException;
 import seedu.foodiebot.model.Model;
+import seedu.foodiebot.model.canteen.Canteen;
+import seedu.foodiebot.model.canteen.Stall;
 import seedu.foodiebot.model.randomize.Randomize;
 
 /** Randomize a food item for the user based on index. */
@@ -30,8 +33,9 @@ public class RandomizeCommand extends Command {
 
     @Override
     public CommandResult execute(Model model) throws CommandException, IOException {
-
         requireNonNull(model);
+        List<Stall> lastShownList = model.getFilteredRandomizeList();
+
         FileReader fileC = model.listOfCanteens();
         FileReader fileS = model.listOfStalls();
         if (prefix.contains("c")) {

@@ -13,13 +13,22 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import seedu.foodiebot.commons.core.Messages;
 import seedu.foodiebot.logic.commands.exceptions.CommandException;
+import seedu.foodiebot.model.canteen.Name;
+import seedu.foodiebot.model.canteen.Stall;
+import seedu.foodiebot.model.food.Food;
 
 /**
  * Randomize a canteen, stall and food choice for the user
  */
 public class Randomize {
+
+    private final ObservableList<Stall> internalList = FXCollections.observableArrayList();
+    private final ObservableList<Stall> internalUnmodifiableList =
+            FXCollections.unmodifiableObservableList(internalList);
 
     private String selectedCanteen = "";
     private String selectedStall = "";
@@ -41,6 +50,13 @@ public class Randomize {
         this.listOutput = new ArrayList<>();
     }
 
+    public Randomize() {
+    }
+
+    public ObservableList<Stall> asUnmodifiableObservableList() {
+        return internalUnmodifiableList;
+    }
+
     /**
      * This method return the output list option.
      * @return String of options.
@@ -55,6 +71,7 @@ public class Randomize {
         }
         return output;
     }
+
     /**
      * This function select a canteen from the jsonfile (foodiebot.json).
      * @param file which is provided from the RandomizeCommand
@@ -97,7 +114,9 @@ public class Randomize {
                 selectedStall = (String) stall.get("name");
                 selectedCanteen = (String) stall.get("canteenName");
                 if (isNotInList(selectedCanteen, selectedStall)) {
+                    Stall newStall = createNewStall(stall);
                     listOutput.add(new String[]{selectedCanteen, selectedStall});
+                    internalList.add(newStall);
                 }
             }
         } catch (IOException | ParseException e) {
@@ -141,7 +160,9 @@ public class Randomize {
                     selectedCanteen = (String) stall.get("canteenName");
                     if (selectedCanteen.equals(canteenName)) {
                         selectedStall = (String) stall.get("name");
+                        Stall newStall = createNewStall(stall);
                         listOutput.add(new String[]{selectedCanteen, selectedStall});
+                        internalList.add(newStall);
                     }
                 }
             }
@@ -180,10 +201,23 @@ public class Randomize {
             if (selectedCanteen.equals(canteenName)) {
                 selectedStall = (String) stall.get("name");
                 if (isNotInList(selectedCanteen, selectedStall)) {
+                    Stall newStall = createNewStall(stall);
                     listOutput.add(new String[]{selectedCanteen, selectedStall});
+                    internalList.add(newStall);
                 }
             }
         }
+
+    }
+
+    private Stall createNewStall(JSONObject stall) {
+        int stallNumber = ((Number) stall.get("stallNumber")).intValue();
+        String stallImageName = (String) stall.get("stallImageName");
+        String cuisine = (String) stall.get("cuisine");
+        String overallPriceRange = (String) stall.get("overallPriceRating");
+        int favorite = ((Number) stall.get("favorite")).intValue();
+        return new Stall(new Name(selectedStall), selectedCanteen, stallNumber, stallImageName,
+                cuisine, overallPriceRange, favorite, new ArrayList<>());
     }
 
 

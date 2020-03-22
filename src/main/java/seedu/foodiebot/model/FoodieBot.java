@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javafx.collections.ObservableList;
 
@@ -15,6 +16,7 @@ import seedu.foodiebot.model.canteen.UniqueCanteenList;
 import seedu.foodiebot.model.favorites.FavoriteFood;
 import seedu.foodiebot.model.food.Food;
 import seedu.foodiebot.model.food.UniqueFoodList;
+import seedu.foodiebot.model.randomize.Randomize;
 import seedu.foodiebot.model.stall.UniqueStallList;
 
 /**
@@ -28,6 +30,7 @@ public class FoodieBot implements ReadOnlyFoodieBot {
     private final UniqueFoodList favoritedFoods;
     private Budget budget;
     private boolean isLocationSpecified;
+    private Randomize randomize;
 
     /*
      * The 'unusual' code block below is a non-static initialization block, sometimes used to avoid duplication
@@ -43,6 +46,7 @@ public class FoodieBot implements ReadOnlyFoodieBot {
         favoritedFoods = new UniqueFoodList();
         budget = new Budget();
         isLocationSpecified = false;
+        randomize = new Randomize();
     }
 
     public FoodieBot() {}
@@ -84,6 +88,10 @@ public class FoodieBot implements ReadOnlyFoodieBot {
         this.isLocationSpecified = isLocationSpecified;
     }
 
+    public void setRandomize(Randomize randomize) {
+        this.randomize = randomize;
+    }
+
 
     /** Resets the existing data of this {@code FoodieBot} with {@code newData}. */
     public void resetData(ReadOnlyFoodieBot newData) {
@@ -92,6 +100,7 @@ public class FoodieBot implements ReadOnlyFoodieBot {
         setCanteens(newData.getCanteenList());
         setStalls(newData.getStallList());
         setFood(newData.getFoodList());
+        setRandomize(newData.getRandomize());
     }
 
     //// canteen-level operations
@@ -160,6 +169,15 @@ public class FoodieBot implements ReadOnlyFoodieBot {
     @Override
     public boolean isLocationSpecified() {
         return isLocationSpecified;
+    }
+
+    @Override
+    public Randomize getRandomize() {
+        return randomize;
+    }
+
+    public ObservableList<Stall> getRandomizeList() {
+        return randomize.asUnmodifiableObservableList();
     }
 
 

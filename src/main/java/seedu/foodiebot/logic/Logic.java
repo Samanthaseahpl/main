@@ -55,5 +55,7 @@ public interface Logic {
 
     /** Returns an unmodifiable view of the filtered list of favorited food */
     ObservableList<Food> getFilteredFavoriteFoodList(boolean isInitialised);
+
+    ObservableList<Stall> getFilteredRandomizeList(boolean isInitialised);
 }
 
