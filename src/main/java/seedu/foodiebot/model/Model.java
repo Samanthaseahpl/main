@@ -106,6 +106,9 @@ public interface Model {
     /** Returns an unmodifiable view of the filtered food list */
     ObservableList<Food> getFilteredFoodList(boolean isInitialised);
 
+    ObservableList<Stall> getFilteredRandomizeList(boolean isInitialised);
+    ObservableList<Stall> getFilteredRandomizeList();
+
     /**
      * Updates the filter of the filtered food list to filter by the given {@code predicate}.
      *

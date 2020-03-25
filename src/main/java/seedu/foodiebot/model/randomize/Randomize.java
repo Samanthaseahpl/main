@@ -15,6 +15,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import seedu.foodiebot.commons.core.Messages;
 import seedu.foodiebot.commons.core.index.Index;
 import seedu.foodiebot.logic.commands.exceptions.CommandException;
@@ -23,11 +25,14 @@ import seedu.foodiebot.model.canteen.Name;
 import seedu.foodiebot.model.canteen.Stall;
 import seedu.foodiebot.model.tag.Tag;
 
-
 /**
  * Randomize a canteen, stall and food choice for the user
  */
 public class Randomize {
+
+    private final ObservableList<Stall> internalList = FXCollections.observableArrayList();
+    private final ObservableList<Stall> internalUnmodifiableList =
+            FXCollections.unmodifiableObservableList(internalList);
 
     private String selectedCanteen = "";
     private String selectedStall = "";
@@ -53,6 +58,13 @@ public class Randomize {
         this.action = action;
         this.listOutput = new ArrayList<>();
         this.output = new StringBuilder();
+    }
+
+    public Randomize() {
+    }
+
+    public ObservableList<Stall> asUnmodifiableObservableList() {
+        return internalUnmodifiableList;
     }
 
     /**
@@ -169,6 +181,7 @@ public class Randomize {
                     Stall stall = matchingCanteen.get(i);
                     selectedStall = stall.getName().toString();
                     listOutput.add(new String[]{selectedCanteen, selectedStall});
+                    internalList.add(stall);
                 }
             }
         } catch (NullPointerException e) {
@@ -189,6 +202,7 @@ public class Randomize {
             selectedStall = stall.getName().toString();
             listOutput.add(new String[]{selectedCanteen, selectedStall});
             listOfStalls.remove(index);
+            internalList.add(stall);
         }
     }
 
@@ -243,6 +257,7 @@ public class Randomize {
                 selectedStall = stall.getName().toString();
                 selectedCanteen = stall.getCanteenName();
                 listOutput.add(new String[]{selectedCanteen, selectedStall});
+                internalList.add(stall);
             }
         }
     }

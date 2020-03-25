@@ -11,6 +11,7 @@ import seedu.foodiebot.commons.core.index.Index;
 import seedu.foodiebot.logic.commands.exceptions.CommandException;
 import seedu.foodiebot.model.Model;
 import seedu.foodiebot.model.canteen.Canteen;
+import seedu.foodiebot.model.canteen.Stall;
 import seedu.foodiebot.model.randomize.Randomize;
 
 /**
@@ -43,8 +44,9 @@ public class RandomizeCommand extends Command {
 
     @Override
     public CommandResult execute(Model model) throws CommandException, IOException {
-
         requireNonNull(model);
+        List<Stall> lastShownList = model.getFilteredRandomizeList();
+
         FileReader fileC = model.listOfCanteens();
         FileReader fileS = model.listOfStalls();
         if (prefix.contains("c")) {
