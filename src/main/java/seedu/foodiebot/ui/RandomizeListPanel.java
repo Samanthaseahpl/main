@@ -23,7 +23,9 @@ public class RandomizeListPanel extends UiPart<Region> {
         simpleListView.setItems(stallList);
         simpleListView.setCellFactory(listView -> new RandomizeListViewCell());
     }
-
+    public ListView<Stall> getSimpleListView() {
+        return simpleListView;
+    }
     /**
      * Custom {@code ListCell} that displays the graphics of a {@code Stall} using a {@code
      * StallCard}.

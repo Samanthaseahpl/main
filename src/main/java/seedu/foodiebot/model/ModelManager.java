@@ -278,20 +278,6 @@ public class ModelManager implements Model {
         return filteredFoods;
     }
 
-    @Override
-    public ObservableList<Stall> getFilteredRandomizeList(boolean isInitialised) {
-        if (!isInitialised) {
-            updateModelManagerStalls();
-        }
-        return randomize;
-    }
-
-    @Override
-    public ObservableList<Stall> getFilteredRandomizeList() {
-        return randomize;
-    }
-
-
     /**
      * Updates the filter of the filtered food list to filter by the given {@code predicate}.
      *
@@ -385,6 +371,18 @@ public class ModelManager implements Model {
         } catch (IOException e) {
             // return Optional.empty();
         }
+    }
+
+    public ObservableList<Stall> getFilteredRandomizeList(boolean isInitialised) {
+        if (!isInitialised) {
+            updateModelManagerStalls();
+        }
+        return randomize;
+    }
+
+    @Override
+    public ObservableList<Stall> getFilteredRandomizeList() {
+        return randomize;
     }
 
     /**
