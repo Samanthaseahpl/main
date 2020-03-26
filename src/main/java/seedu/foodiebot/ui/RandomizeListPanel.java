@@ -3,6 +3,7 @@ package seedu.foodiebot.ui;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Region;
@@ -15,7 +16,7 @@ public class RandomizeListPanel extends UiPart<Region> {
     private static final String FXML = "SimpleListViewPanel.fxml";
     private final Logger logger = LogsCenter.getLogger(RandomizeListPanel.class);
 
-    @javafx.fxml.FXML
+    @FXML
     private ListView<Stall> simpleListView;
 
     public RandomizeListPanel(ObservableList<Stall> stallList) {

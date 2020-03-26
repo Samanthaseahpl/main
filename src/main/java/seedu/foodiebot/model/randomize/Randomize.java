@@ -18,7 +18,6 @@ import org.json.simple.parser.ParseException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seedu.foodiebot.commons.core.Messages;
-import seedu.foodiebot.commons.core.index.Index;
 import seedu.foodiebot.logic.commands.exceptions.CommandException;
 import seedu.foodiebot.model.canteen.Canteen;
 import seedu.foodiebot.model.canteen.Name;
@@ -30,14 +29,13 @@ import seedu.foodiebot.model.tag.Tag;
  */
 public class Randomize {
 
-    private final ObservableList<Stall> internalList = FXCollections.observableArrayList();
-    private final ObservableList<Stall> internalUnmodifiableList =
-            FXCollections.unmodifiableObservableList(internalList);
+    private static Randomize singleRandomize = null;
 
     private String selectedCanteen = "";
     private String selectedStall = "";
-    private List<String[]> listOutput;
-    private StringBuilder output;
+    private List<String[]> listOutput = new ArrayList<>();
+    private List<Stall> optionsList = new ArrayList<>();
+    private StringBuilder output = new StringBuilder("Here are the choices:\n");
     private JSONArray jsonArrayStall;
     private Map<String, Integer> mapStalls = new HashMap<>();
     private Boolean isLessThanFiveOption = false;
@@ -45,25 +43,45 @@ public class Randomize {
     private String prefix;
     private String action;
 
+    private Randomize() {}
 
-    public Randomize(String prefix, String action) {
+    /**
+     * This method ensure that there is only 1 randomize object.
+     * @return Randomize
+     */
+    public static Randomize checkRandomize() {
+        if (singleRandomize == null) {
+            singleRandomize = new Randomize();
+        }
+        return singleRandomize;
+    }
+
+    /**
+     * This method clears all the list items.
+     */
+    public void resetInternalList() {
+        this.optionsList.clear();
+        this.listOutput.clear();
+    }
+
+    public void setPrefix(String prefix) {
         this.prefix = prefix;
+    }
+
+    public void setAction(String action) {
         this.action = action;
-        this.listOutput = new ArrayList<>();
-        this.output = new StringBuilder();
     }
 
-    public Randomize(String prefix, Index index) {
-        this.prefix = prefix;
-        this.action = action;
-        this.listOutput = new ArrayList<>();
-        this.output = new StringBuilder();
-    }
-
-    public Randomize() {
-    }
-
+    /**
+     * This method creates an UnmodifiableObservableList for the BaseScene.
+     * @return ObservableList with stall object.
+     */
     public ObservableList<Stall> asUnmodifiableObservableList() {
+        ObservableList<Stall> internalList = FXCollections.observableArrayList(optionsList);
+        ObservableList<Stall> internalUnmodifiableList =
+                FXCollections.unmodifiableObservableList(internalList);
+        System.out.println(internalList);
+        resetInternalList();
         return internalUnmodifiableList;
     }
 
@@ -76,20 +94,8 @@ public class Randomize {
         if (listOutput.isEmpty() && prefix.contains("t")) {
             output.append("There are no stall with this tag: ")
                     .append(action);
-        } else {
-            output.append("Here are the choices:\n");
-            for (int i = 0; i < listOutput.size(); i++) {
-                String[] text = listOutput.get(i);
-                output.append(i + 1)
-                        .append(". ")
-                        .append(text[0])
-                        .append(", ")
-                        .append(text[1])
-                        .append("\n");
-            }
-            if (isLessThanFiveOption) {
-                output.append("There are less than 5 stores in this canteen. This is all the result.");
-            }
+        } else if (isLessThanFiveOption) {
+            output.append("There are less than 5 stores in this canteen. This is all the result.");
         }
         return output.toString();
     }
@@ -181,7 +187,7 @@ public class Randomize {
                     Stall stall = matchingCanteen.get(i);
                     selectedStall = stall.getName().toString();
                     listOutput.add(new String[]{selectedCanteen, selectedStall});
-                    internalList.add(stall);
+                    optionsList.add(stall);
                 }
             }
         } catch (NullPointerException e) {
@@ -202,7 +208,7 @@ public class Randomize {
             selectedStall = stall.getName().toString();
             listOutput.add(new String[]{selectedCanteen, selectedStall});
             listOfStalls.remove(index);
-            internalList.add(stall);
+            optionsList.add(stall);
         }
     }
 
@@ -257,7 +263,7 @@ public class Randomize {
                 selectedStall = stall.getName().toString();
                 selectedCanteen = stall.getCanteenName();
                 listOutput.add(new String[]{selectedCanteen, selectedStall});
-                internalList.add(stall);
+                optionsList.add(stall);
             }
         }
     }

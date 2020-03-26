@@ -4,7 +4,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javafx.collections.ObservableList;
 
@@ -50,7 +49,7 @@ public class FoodieBot implements ReadOnlyFoodieBot {
         transactions = new PurchasedFoodList();
         budget = new Budget();
         isLocationSpecified = false;
-        randomize = new Randomize();
+        randomize = Randomize.checkRandomize();
     }
 
     public FoodieBot() {}
@@ -92,10 +91,6 @@ public class FoodieBot implements ReadOnlyFoodieBot {
         this.isLocationSpecified = isLocationSpecified;
     }
 
-    public void setRandomize(Randomize randomize) {
-        this.randomize = randomize;
-    }
-
 
     /** Resets the existing data of this {@code FoodieBot} with {@code newData}. */
     public void resetData(ReadOnlyFoodieBot newData) {
@@ -104,7 +99,6 @@ public class FoodieBot implements ReadOnlyFoodieBot {
         setCanteens(newData.getCanteenList());
         setStalls(newData.getStallList());
         setFood(newData.getFoodList());
-        setRandomize(newData.getRandomize());
     }
 
     //// canteen-level operations
@@ -178,10 +172,6 @@ public class FoodieBot implements ReadOnlyFoodieBot {
     @Override
     public Randomize getRandomize() {
         return randomize;
-    }
-
-    public ObservableList<Stall> getRandomizeList() {
-        return randomize.asUnmodifiableObservableList();
     }
 
 

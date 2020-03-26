@@ -169,7 +169,7 @@ abstract class BaseScene {
 
     @FXML
     public void handleListRandomize() {
-        addToListPanel(new RandomizeListPanel(logic.getFilteredRandomizeList(true)));
+        addToListPanel(new RandomizeListPanel(logic.getFilteredRandomizeList()));
     }
 
     /** The method passed from logic to UI. */

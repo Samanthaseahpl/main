@@ -194,13 +194,9 @@ public class LogicManager implements Logic {
         return model.getFilteredTransactionsList();
     }
 
-
-    public ObservableList<Stall> getFilteredRandomizeList(boolean isInitialised) {
-        return model.getFilteredRandomizeList();
-    }
-
     @Override
     public ObservableList<Stall> getFilteredRandomizeList() {
         return model.getFilteredRandomizeList();
     }
+
 }
