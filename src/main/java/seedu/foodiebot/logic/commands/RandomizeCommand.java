@@ -57,7 +57,7 @@ public class RandomizeCommand extends Command {
         FileReader fileS = model.listOfStalls();
         randomize.resetInternalList();
         if (prefix.contains("c")) {
-            if (index != null) {
+            if (index.isPresent()) {
                 List<Canteen> canteenList = model.getFilteredCanteenList();
                 Canteen canteen = canteenList.get(index.get().getZeroBased());
                 randomize.setCanteenIndex(canteen);
