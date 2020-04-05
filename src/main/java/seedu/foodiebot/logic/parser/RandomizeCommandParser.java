@@ -1,13 +1,16 @@
 package seedu.foodiebot.logic.parser;
 
+
 import static seedu.foodiebot.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.foodiebot.logic.parser.CliSyntax.PREFIX_CANTEEN;
 import static seedu.foodiebot.logic.parser.CliSyntax.PREFIX_TAG;
+
 
 import java.util.stream.Stream;
 
 import seedu.foodiebot.commons.core.index.Index;
 import seedu.foodiebot.logic.commands.RandomizeCommand;
+
 import seedu.foodiebot.logic.parser.exceptions.ParseException;
 import seedu.foodiebot.model.randomize.Randomize;
 
@@ -37,12 +40,11 @@ public class RandomizeCommandParser implements Parser<RandomizeCommand> {
         if (args.equals("")) {
             return new RandomizeCommand("", "all", randomize);
         } else if (!arePrefixesPresent(argMultimap, PREFIX_CANTEEN)) {
-            if (!arePrefixesPresent(argMultimap, PREFIX_TAG)) {
-                throw new ParseException(
-                        String.format(MESSAGE_INVALID_COMMAND_FORMAT, RandomizeCommand.MESSAGE_USAGE));
-            }
+            if (!arePrefixesPresent(argMultimap, PREFIX_TAG)) throw new ParseException(
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, RandomizeCommand.MESSAGE_USAGE));
         }
         return separatePrefix(argMultimap);
+
     }
 
     /**
@@ -77,10 +79,6 @@ public class RandomizeCommandParser implements Parser<RandomizeCommand> {
                 .allMatch(prefix -> argumentMultimap.getValue(prefix).isPresent());
     }
 
-    private static boolean prefixPresent(ArgumentMultimap argMultimap) {
-        return argMultimap.size(false) == 1 && argMultimap.containsAny(
-                PREFIX_CANTEEN, PREFIX_TAG);
-    }
 
     /**
      * This method extract the argument attached to the prefix.
