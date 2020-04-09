@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -26,6 +27,7 @@ import seedu.foodiebot.logic.commands.ActionCommandResult;
 import seedu.foodiebot.logic.commands.BackCommand;
 import seedu.foodiebot.logic.commands.BudgetCommand;
 import seedu.foodiebot.logic.commands.CommandResult;
+import seedu.foodiebot.logic.commands.DeleteCommand;
 import seedu.foodiebot.logic.commands.DirectionsCommandResult;
 import seedu.foodiebot.logic.commands.EnterCanteenCommand;
 import seedu.foodiebot.logic.commands.FavoritesCommand;
@@ -35,10 +37,13 @@ import seedu.foodiebot.logic.commands.RandomizeCommand;
 import seedu.foodiebot.logic.commands.RateCommand;
 import seedu.foodiebot.logic.commands.ReportCommand;
 import seedu.foodiebot.logic.commands.ReviewCommand;
+import seedu.foodiebot.logic.commands.SelectItemCommand;
 import seedu.foodiebot.logic.commands.TransactionsCommand;
 import seedu.foodiebot.logic.commands.exceptions.CommandException;
 import seedu.foodiebot.logic.parser.ParserContext;
 import seedu.foodiebot.logic.parser.exceptions.ParseException;
+import seedu.foodiebot.model.Model;
+import seedu.foodiebot.model.budget.Budget;
 import seedu.foodiebot.model.canteen.Canteen;
 import seedu.foodiebot.model.canteen.Stall;
 
@@ -51,6 +56,7 @@ public class BaseScene {
     protected MenuItem helpMenuItem;
 
     protected Logic logic;
+    protected Model model;
     protected Stage primaryStage;
     // Independent Ui parts residing in this Ui container
     private final Logger logger = LogsCenter.getLogger(getClass());
@@ -74,6 +80,9 @@ public class BaseScene {
 
     @FXML
     private Label bottomLabel;
+
+    @FXML
+    private ProgressBar budgetTracker;
 
     private HelpWindow helpWindow;
 
@@ -157,6 +166,24 @@ public class BaseScene {
         }
     }
 
+    /**
+     * .
+     * @param result
+     * @param budget
+     */
+    void updateResultDisplayBudget(String result, Budget budget) {
+        resultDisplayPlaceholder = (StackPane) primaryStage.getScene().lookup("#resultDisplayPlaceholder");
+        resultDisplay = new ResultDisplay();
+        if (!result.isEmpty()) {
+            getResultDisplay().setFeedbackToUser(result, budget);
+            resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
+        }
+    }
+
+    /**
+     * /
+     * @param result
+     */
     void updateResultDisplayContextAware(String result) {
         if (!ParserContext.getCurrentContext().equals(ParserContext.DIRECTIONS_CONTEXT)) {
             updateResultDisplay(result);
@@ -254,7 +281,6 @@ public class BaseScene {
         // new MainScene(primaryStage, logic);
         topLabel.setText("List of Transactions");
         addToListPanel(new TransactionsPanel(logic.getFilteredTransactionsList()));
-
     }
 
     /** Fills the randomize panel. */
@@ -277,7 +303,6 @@ public class BaseScene {
         try {
             commandResult = logic.execute(commandText);
             logger.info("Result: " + commandResult.getFeedbackToUser());
-
             switch (commandResult.commandName) {
             case ListCommand.COMMAND_WORD:
                 handleListCanteens(commandResult);
@@ -286,8 +311,7 @@ public class BaseScene {
                 break;
             case GoToCanteenCommand
                     .COMMAND_WORD:
-                if (commandResult instanceof DirectionsCommandResult && ParserContext.getCurrentContext()
-                    .equals(ParserContext.MAIN_CONTEXT)) {
+                if (commandResult instanceof DirectionsCommandResult) {
                     //new DirectionsWindowScene(getPrimaryStage(), logic, (DirectionsCommandResult) commandResult)
                     // .show();
 
@@ -334,34 +358,52 @@ public class BaseScene {
                 updateResultDisplay(commandResult.getFeedbackToUser());
                 break;
             case TransactionsCommand.COMMAND_WORD:
+                ParserContext.setCurrentContext(ParserContext.TRANSACTIONS_CONTEXT);
                 handleListTransactions();
                 updateResultDisplay(commandResult.getFeedbackToUser());
                 break;
+            case DeleteCommand.COMMAND_WORD:
+                if (ParserContext.getCurrentContext().equals(ParserContext.TRANSACTIONS_CONTEXT)) {
+                    handleListTransactions();
+                    updateResultDisplay(commandResult.getFeedbackToUser());
+                }
+                break;
             case ReportCommand.COMMAND_WORD:
+                ParserContext.setCurrentContext(ParserContext.REPORT_CONTEXT);
                 changeScene("MainScene.fxml");
                 // VBox pane = (VBox) loadFxmlFile("NoResultDisplayScene.fxml");
                 // primaryStage.getScene().setRoot(pane);
+                topLabel.setText("Report: ");
                 new ReportScene(primaryStage, logic);
                 updateResultDisplay(commandResult.getFeedbackToUser());
                 break;
             case BudgetCommand.COMMAND_WORD:
                 handleListTransactions();
-                updateResultDisplay(commandResult.getFeedbackToUser());
+                updateResultDisplayBudget(commandResult.getFeedbackToUser(), logic.getFoodieBot().getBudget());
                 break;
             case RateCommand.COMMAND_WORD:
-                handleListTransactions();
-                updateResultDisplay(commandResult.getFeedbackToUser());
+                if (ParserContext.getCurrentContext().equals(ParserContext.TRANSACTIONS_CONTEXT)) {
+                    handleListTransactions();
+                    updateResultDisplay(commandResult.getFeedbackToUser());
+                }
                 break;
             case ReviewCommand.COMMAND_WORD:
-                handleListTransactions();
-                updateResultDisplay(commandResult.getFeedbackToUser());
+                if (ParserContext.getCurrentContext().equals(ParserContext.TRANSACTIONS_CONTEXT)) {
+                    handleListTransactions();
+                    updateResultDisplay(commandResult.getFeedbackToUser());
+                }
                 break;
             case RandomizeCommand.COMMAND_WORD:
                 handleListRandomize();
                 updateResultDisplay(commandResult.getFeedbackToUser());
                 break;
+            case SelectItemCommand.COMMAND_WORD:
+                updateResultDisplayBudget(commandResult.getFeedbackToUser(), logic.getFoodieBot().getBudget());
+                break;
             case BackCommand.COMMAND_WORD:
-                topLabel.setText("");
+                if (topLabel != null) {
+                    topLabel.setText("");
+                }
                 switch (ParserContext.getCurrentContext()) {
                 case ParserContext.MAIN_CONTEXT:
                     handleListCanteens(commandResult);

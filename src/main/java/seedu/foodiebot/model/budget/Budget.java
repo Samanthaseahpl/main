@@ -97,7 +97,7 @@ public class Budget {
      * Constructs an empty default budget.
      */
     public Budget() {
-        this(Float.MAX_VALUE, DAILY);
+        this(0, DAILY);
     }
 
     /** Sets a DateRange based on the duration of the budget cycle and the system date.
@@ -190,7 +190,7 @@ public class Budget {
     }
     /** Check if this is a default value */
     public boolean isDefaultBudget() {
-        return this.totalBudget == Float.MAX_VALUE;
+        return this.totalBudget == 0;
     }
 
     @Override

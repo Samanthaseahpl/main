@@ -81,6 +81,35 @@ public class SelectItemCommand extends Command {
         String nameOfFood = "";
         float priceOfFood = 0;
         Optional<Food> food = Optional.empty();
+
+        /*
+        if (index.isPresent() || foodName.isPresent()) {
+            List<Food> foodList = model.getFilteredFoodList();
+            if (index.isPresent()) {
+                try {
+                    food = Optional.of(foodList.get(index.get().getZeroBased()));
+                    nameOfFood = food.get().getName();
+                    priceOfFood = food.get().getPrice();
+                    logger.info("Enter " + food.get().getName());
+                } catch (IndexOutOfBoundsException e) {
+                    throw new CommandException(INVALID_INDEX_MESSAGE);
+                }
+            } else {
+                for (Food f : foodList) {
+                    if (f.getName().equalsIgnoreCase(foodName.get())) {
+                        food = Optional.of(f);
+                        nameOfFood = foodName.get();
+                        priceOfFood = f.getPrice();
+                        break;
+                    }
+                }
+            }
+
+        } else {
+            throw new CommandException(INVALID_INDEX_MESSAGE);
+        }*/
+
+
         if (index.isPresent()) {
             List<Food> foodList = model.getFilteredFoodList();
             try {
@@ -89,7 +118,7 @@ public class SelectItemCommand extends Command {
                 priceOfFood = food.get().getPrice();
                 logger.info("Enter " + food.get().getName());
             } catch (IndexOutOfBoundsException e) {
-                return new CommandResult(COMMAND_WORD, INVALID_INDEX_MESSAGE);
+                throw new CommandException(INVALID_INDEX_MESSAGE);
             }
         } else if (foodName.isPresent()) {
             List<Food> foodList = model.getFilteredFoodList();
@@ -102,7 +131,7 @@ public class SelectItemCommand extends Command {
                 }
             }
         } else {
-            throw new CommandException(MESSAGE_FAILURE);
+            throw new CommandException(INVALID_INDEX_MESSAGE);
         }
 
         if (food.isEmpty()) {
@@ -117,8 +146,9 @@ public class SelectItemCommand extends Command {
         Review review = new Review();
         PurchasedFood purchase = new PurchasedFood(food.get(), dateAdded, timeAdded, rating, review);
 
-        if (model.getBudget().isPresent()) {
-            Budget savedBudget = model.getBudget().get();
+        Budget savedBudget = model.getBudget().get();
+
+        if (savedBudget.getTotalBudget() != 0) {
 
             if (savedBudget.getRemainingBudget() < priceOfFood) {
                 throw new CommandException(EXCEEDED_BUDGET);
@@ -126,7 +156,7 @@ public class SelectItemCommand extends Command {
 
             savedBudget.subtractFromRemainingBudget(priceOfFood);
             model.setBudget(savedBudget);
-            Budget newBudget = model.getBudget().get();
+            Budget newBudget = model.getFoodieBot().getBudget();
 
             saveTransaction(model, purchase);
             return new CommandResult(COMMAND_WORD, String.format(
